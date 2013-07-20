@@ -6,7 +6,7 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System\Database;
+namespace Slys\Database;
 
 class Exception extends \Exception {
 

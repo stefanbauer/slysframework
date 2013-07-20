@@ -6,7 +6,7 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System;
+namespace Slys;
 
 class Plugin extends HelperCompatible {
 

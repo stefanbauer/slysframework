@@ -6,9 +6,9 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System;
+namespace Slys;
 
-use System\Application\Exception;
+use Slys\Application\Exception;
 
 class View extends HelperCompatible {
 

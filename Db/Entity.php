@@ -6,10 +6,10 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System\Db;
+namespace Slys\Db;
 
-use System\Application;
-use System\Database;
+use Slys\Application;
+use Slys\Database;
 
 class Entity {
 
@@ -157,7 +157,7 @@ class Entity {
 	 * will throw error if executed on not loaded object
 	 *
 	 * @return string
-	 * @throws \System\Database\Exception
+	 * @throws \Slys\Database\Exception
 	 */
 	private function _getWherePart() {
 

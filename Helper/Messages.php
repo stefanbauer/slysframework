@@ -5,7 +5,7 @@
  * @author		pgalaton <pgalaton@tritendo.de>
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
-namespace System\Helper;
+namespace Slys\Helper;
 
 class Messages {
 

@@ -6,9 +6,9 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System;
+namespace Slys;
 
-use System\Database\Exception;
+use Slys\Database\Exception;
 
 class Database extends \mysqli {
 

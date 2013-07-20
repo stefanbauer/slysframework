@@ -6,13 +6,13 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System;
+namespace Slys;
 
 /**
  * Class HelperCompatible
  * Defines methods that provide compatibility with plugins
  *
- * @package System
+ * @package Slys
  */
 class HelperCompatible {
 

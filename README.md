@@ -1,4 +1,4 @@
-# What is it?
+# What is it exactly?
 
 We didn't want to use killer frameworks like Zend Framework for really smaller projects we did. Therefore we decided to create a a microframework with our needs. Maybe someone of you can need it. Feel free to use it, edit it, and if you want, report a bug. Feel also free to contact us, if there are any problems with it, or you want to be a part of the great developer team :-) For us it is only a means to an end.
 

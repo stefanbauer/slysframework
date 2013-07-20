@@ -6,7 +6,7 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System\Helper;
+namespace Slys\Helper;
 
 class Translate {
 

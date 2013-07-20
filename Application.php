@@ -6,9 +6,9 @@
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
  */
 
-namespace System;
+namespace Slys;
 
-use System\Application\Exception;
+use Slys\Application\Exception;
 
 class Application {
 
@@ -340,7 +340,7 @@ class Application {
 			if( $pluginObject instanceof Plugin )
 				$this->_loadedPlugins[] = $pluginObject;
 			else
-				throw new Exception('Plugin `'.$pluginClassName.'` is not instance of System\\Plugin');
+				throw new Exception('Plugin `'.$pluginClassName.'` is not instance of Slys\\Plugin');
 
 		}
 
@@ -393,7 +393,7 @@ class Application {
 		// clear variables
 		$this->_classMap = [];
 
-		$this->_loadFolderToClassMap(PATH_SYSTEM, 'System');
+		$this->_loadFolderToClassMap( PATH_SLYS, 'Slys' );
 
 		// parse modules
 		$modules = glob( PATH_APP . DS . 'modules' . DS . '*', GLOB_ONLYDIR );
@@ -402,7 +402,7 @@ class Application {
 
 			$moduleName = basename($modulePath);
 
-			foreach( $moduleElements as $folderName => $namespace) {
+			foreach( $moduleElements as $folderName => $namespace ) {
 				$this->_loadFolderToClassMap($modulePath . DS .$folderName, $moduleName.'\\'.$namespace);
 			}
 
@@ -423,7 +423,7 @@ class Application {
 	 * @param string $folderPath
 	 * @param string $namespace namespace to use as prefix
 	 */
-	private function _loadFolderToClassMap($folderPath, $namespace) {
+	private function _loadFolderToClassMap( $folderPath, $namespace ) {
 
 		$baseFolder = $folderPath;
 
