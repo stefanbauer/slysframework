@@ -43,6 +43,9 @@ class Entity {
 
 	}
 
+	/**
+	 * @return array
+	 */
 	public function toArray() {
 
 		return $this->_data;
