@@ -13,7 +13,7 @@ class Messages {
 		return $this;
 	}
 
-	public function add($message, $type) {
+	public function add( $message, $type ) {
 		var_dump($message, $type, 'added');
 	}
 
