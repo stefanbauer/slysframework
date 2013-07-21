@@ -16,8 +16,12 @@ class Entity {
 	protected $_tableName = null;
 	protected $_primaryKey = [];
 	protected $_className = null;
-	protected $_data = [];
+
+	private $_columnValues = [];
+	private $_dirtyColumns = [];
+
 	private $_loaded = false;
+
 
 	public final function __construct( $id = null ) {
 
@@ -43,14 +47,33 @@ class Entity {
 
 	}
 
+	public function setColumnValue($column, $value) {
+
+		$this->_columnValues[$column] = $value;
+		$this->_dirtyColumns[] = $column;
+
+	}
+
+	public function getColumnValue($column) {
+
+		return ($this->_columnValues[$column]) ? $this->_columnValues[$column] : null;
+
+	}
+
 	/**
-	 * To array
+	 * Check if is dirty
 	 *
-	 * @return array
+	 * @return bool
 	 */
+	public function isDirty() {
+
+		return false === empty($this->_dirtyColumns);
+
+	}
+
 	public function toArray() {
 
-		return $this->_data;
+		return $this->_columnValues;
 
 	}
 
@@ -58,19 +81,23 @@ class Entity {
 
 		$db = Database::getInstance();
 
-		if( $this->_loaded ) {
+		if($this->_loaded && false === $this->isDirty())
+			return $this;
+
+		if( $this->_loaded )
 			$query = "UPDATE `".$this->_tableName."` SET ";
-		} else {
+		else
 			$query = "INSERT INTO `".$this->_tableName."` SET ";
-		}
 
 		$set = [];
 
-		foreach($this->_data as $columnName => $value) {
+		foreach($this->_dirtyColumns as $columnName) {
 
 			// skip primary keys
 			if( in_array($columnName, $this->_primaryKey) )
 				continue;
+
+			$value = $this->_columnValues[$columnName];
 
 			$value = is_numeric($value) ? (int)$value : "'".$db->real_escape_string($value)."'";
 			$set[] = '`'.$columnName.'` = ' . $value;
@@ -84,11 +111,6 @@ class Entity {
 
 		$result = $db->query($query);
 
-//		var_dump($query);
-
-//		$query = "REPLACE INTO `".$this->_tableName."` (`".implode('`,`', array_keys($this->_data))."`) VALUES (".implode(',', $values).")";
-//		$result = $db->query($query);
-
 	}
 
 	function __call( $name, $arguments ) {
@@ -99,13 +121,13 @@ class Entity {
 		if(strpos( $underscoredName,'get_' ) === 0) {
 
 			$columnName = str_replace('get_', '', $underscoredName );
-			return $this->_data[$columnName];
+			return $this->getColumnValue($columnName);
 
 		}
 		elseif(strpos( $underscoredName,'set_' ) === 0) {
 
 			$columnName = str_replace('set_', '', $underscoredName );
-			$this->_data[$columnName] = $arguments[0];
+			$this->setColumnValue($columnName, $arguments[0]);
 
 		}
 
@@ -150,11 +172,17 @@ class Entity {
 		$result = $db->query($query);
 		$values = $result->fetch_assoc();
 
-		$this->fromArray($values);
+		if( $values ) {
+			$this->fromArray( $values );
+			$this->_loaded = true;
+		}
 
-		$this->_loaded = true;
+		// reset dirty columns
+		$this->_dirtyColumns = [];
 
 	}
+
+
 
 
 	/**
@@ -176,7 +204,7 @@ class Entity {
 
 		foreach( $this->_primaryKey as $columnName ) {
 
-			$value = $this->_data[$columnName];
+			$value = $this->_columnValues[$columnName];
 
 			$value = (is_numeric($value)) ? (int)$value : '\''.$db->real_escape_string($value).'\'';
 
