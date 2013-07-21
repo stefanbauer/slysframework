@@ -11,6 +11,12 @@ namespace Slys\Db;
 use Slys\Application;
 use Slys\Database;
 
+/**
+ * Base entity class for all entities
+ * Provides setters and getters, as well as modification methods
+ *
+ * @package Slys\Db
+ */
 class Entity {
 
 	protected $_tableName = null;
@@ -36,6 +42,11 @@ class Entity {
 
 	}
 
+	/**
+	 * Populate object with values from array
+	 *
+	 * @param array $values
+	 */
 	public function fromArray(array $values) {
 
 		foreach( $values as $fieldName => $value ) {
@@ -47,6 +58,12 @@ class Entity {
 
 	}
 
+	/**
+	 * Sets a column value
+	 *
+	 * @param $column
+	 * @param $value
+	 */
 	public function setColumnValue($column, $value) {
 
 		$this->_columnValues[$column] = $value;
@@ -54,6 +71,12 @@ class Entity {
 
 	}
 
+	/**
+	 * Get column value
+	 *
+	 * @param $column
+	 * @return null
+	 */
 	public function getColumnValue($column) {
 
 		return ($this->_columnValues[$column]) ? $this->_columnValues[$column] : null;
@@ -71,6 +94,11 @@ class Entity {
 
 	}
 
+	/**
+	 * Returns all stored column values
+	 *
+	 * @return array
+	 */
 	public function toArray() {
 
 		return $this->_columnValues;
@@ -101,6 +129,7 @@ class Entity {
 
 			$value = is_numeric($value) ? (int)$value : "'".$db->real_escape_string($value)."'";
 			$set[] = '`'.$columnName.'` = ' . $value;
+
 		}
 
 		$query .= join(', ', $set);
@@ -109,10 +138,17 @@ class Entity {
 			$query .= ' WHERE '. $this->_getWherePart();
 		}
 
-		$result = $db->query($query);
+		$db->query($query);
 
 	}
 
+	/**
+	 * Magic method that supports getters and setters
+	 *
+	 * @param $name
+	 * @param $arguments
+	 * @return null
+	 */
 	function __call( $name, $arguments ) {
 
 		// convert from getColumnName to get_column_name
@@ -135,6 +171,9 @@ class Entity {
 
 	}
 
+	/**
+	 * Gets table name based on class name
+	 */
 	private function _detectTableName() {
 
 		$className = get_class($this);
@@ -181,8 +220,6 @@ class Entity {
 		$this->_dirtyColumns = [];
 
 	}
-
-
 
 
 	/**
