@@ -255,7 +255,10 @@ class Application {
 
 		$this->_callPluginsMethod('preDispatch');
 
-		$this->_layout->setName($defaultLayout);
+		$layoutName = $this->_layout->getName();
+
+		if( empty($layoutName) )
+			$this->_layout->setName($defaultLayout);
 
 		$this->_callPluginsMethod('postDispatch');
 

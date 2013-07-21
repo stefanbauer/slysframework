@@ -31,7 +31,7 @@ class Layout extends HelperCompatible {
 	 */
 	public function render() {
 
-		require_once PATH_LAYOUTS . DS . $this->_name . '.phtml';
+		require_once PATH_LAYOUTS . DS . $this->getName() . '.phtml';
 
 	}
 
@@ -80,12 +80,6 @@ class Layout extends HelperCompatible {
 
 	}
 
-	/**
-	 * Sets a name
-	 *
-	 * @access public
-	 * @param $name
-	 */
 	public function setName( $name ) {
 
 		if($this->_name == $name)
