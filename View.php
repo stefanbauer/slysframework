@@ -12,7 +12,7 @@ use Slys\Application\Exception;
 
 class View extends HelperCompatible {
 
-	private $data = [];
+	private $_data = [];
 	private $_templateFile;
 
 	/**
@@ -39,26 +39,8 @@ class View extends HelperCompatible {
 	 * @param array $data
 	 */
 	public function setData( array $data ) {
-		$this->data = $data;
+		$this->_data = $data;
 	}
-
-	public function __get( $name ) {
-
-		if(!empty($this->data[$name]))
-			return $this->data[$name];
-
-		return null;
-
-	}
-
-	public function __set( $name, $value ) {
-		$this->data[$name] = $value;
-	}
-
-	public function __isset( $name ) {
-		return !empty($this->data[$name]);
-	}
-
 
 	/**
 	 * Render
@@ -69,6 +51,32 @@ class View extends HelperCompatible {
 	public function render() {
 
 		require_once $this->_templateFile;
+
+	}
+	public function __get( $name ) {
+
+		if(!empty($this->_data[$name]))
+			return $this->_data[$name];
+
+		return null;
+
+	}
+
+	public function __set( $name, $value ) {
+
+		$this->_data[$name] = $value;
+
+	}
+
+	public function __isset( $name ) {
+
+		return !empty($this->_data[$name]);
+
+	}
+
+	public function __unset($name) {
+
+		unset( $this->_data[$name] );
 
 	}
 
