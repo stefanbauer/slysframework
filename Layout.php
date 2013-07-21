@@ -144,6 +144,7 @@ class Layout extends HelperCompatible {
 
 		$application = Application::getInstance();
 
+		// while there is placeholders to process
 		while( count($this->_placeholders) > 0 ) {
 
 			$placeholderName = current( array_keys( $this->_placeholders ) );

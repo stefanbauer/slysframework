@@ -39,12 +39,26 @@ class View extends HelperCompatible {
 	 * @param array $data
 	 */
 	public function setData( array $data ) {
-
 		$this->data = $data;
-
-		foreach( $data as $key => &$value )
-			$this->$key = $value;
 	}
+
+	public function __get( $name ) {
+
+		if(!empty($this->data[$name]))
+			return $this->data[$name];
+
+		return null;
+
+	}
+
+	public function __set( $name, $value ) {
+		$this->data[$name] = $value;
+	}
+
+	public function __isset( $name ) {
+		return !empty($this->data[$name]);
+	}
+
 
 	/**
 	 * Render
