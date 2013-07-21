@@ -44,6 +44,8 @@ class Entity {
 	}
 
 	/**
+	 * To array
+	 *
 	 * @return array
 	 */
 	public function toArray() {
