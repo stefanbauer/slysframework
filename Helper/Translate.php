@@ -13,16 +13,6 @@ class Translate {
 	private $_language = 'en';
 	private $_translations = [];
 
-	private function _loadTranslations() {
-
-		$translationFile = PATH_LANG . DS . $this->_language . '.lang.php';
-
-		if( file_exists($translationFile) )
-			$this->_translations = require $translationFile;
-
-
-	}
-
 	/**
 	 * @param string $language
 	 */
@@ -51,6 +41,16 @@ class Translate {
 			$translation = $this->_translations[$label];
 
 		return $translation;
+
+	}
+
+	private function _loadTranslations() {
+
+		$translationFile = PATH_LANG . DS . $this->_language . '.lang.php';
+
+		if( file_exists($translationFile) )
+			$this->_translations = require $translationFile;
+
 
 	}
 

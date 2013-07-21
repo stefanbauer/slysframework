@@ -8,8 +8,6 @@
 
 namespace Slys\Helper;
 
-use Slys\Request;
-
 class Url {
 
 	public function url( array $config = [] ) {
