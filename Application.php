@@ -306,8 +306,13 @@ class Application {
 
 		$helpersList = $this->getConfig('helpers');
 
-		if(empty($helpersList))
-			return;
+		// merge default helpers with custom
+		$helpersList = array_merge([
+			'translate'	=> 'Slys\Helper\Translate',
+			'url'		=> 'Slys\Helper\Url',
+			'messages'	=> 'Slys\Helper\Messages',
+			'context'   => 'Slys\Helper\Context'
+		], $helpersList);
 
 		foreach( $helpersList as $helperName => $helperClassName ) {
 

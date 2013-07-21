@@ -24,6 +24,13 @@ class Request {
 		return $this->_isPost;
 	}
 
+	/**
+	 * @return bool
+	 */
+	public function isXmlHttp() {
+		return false; // todo
+	}
+
 	public function setMethod( $method ) {
 		switch( $method ) {
 			case 'POST':

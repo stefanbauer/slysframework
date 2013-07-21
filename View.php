@@ -53,6 +53,11 @@ class View extends HelperCompatible {
 		require_once $this->_templateFile;
 
 	}
+
+	public function toJSON() {
+		return json_encode($this->_data);
+	}
+
 	public function __get( $name ) {
 
 		if(!empty($this->_data[$name]))

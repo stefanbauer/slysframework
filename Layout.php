@@ -31,7 +31,12 @@ class Layout extends HelperCompatible {
 	 */
 	public function render() {
 
-		require_once PATH_LAYOUTS . DS . $this->getName() . '.phtml';
+		if( Application::getInstance()->getHelper('context')->isJSON() ) {
+			echo $this->_views['content']->toJSON();
+		}
+		else {
+			require_once PATH_LAYOUTS . DS . $this->getName() . '.phtml';
+		}
 
 	}
 
@@ -157,14 +162,18 @@ class Layout extends HelperCompatible {
 			$viewObject = call_user_func_array($callable, array($request, $placeholderName));
 
 			// if callable returned us something, and this something is View object
-			// use it as result and ignore request
-			if(!empty($viewObject) && $viewObject instanceof View)
-				return $viewObject;
-
-			$viewObject = $application->processRequest( $request );
+			// use it as result
+			if( false === $viewObject instanceof View)
+				$viewObject = $application->processRequest( $request );
 
 			// store view object
 			$this->_views[$placeholderName] = $viewObject;
+
+			if( $application->getHelper('context')->isJSON() ) {
+				$this->_placeholders = [];
+				return;
+			}
+
 		}
 
 	}
