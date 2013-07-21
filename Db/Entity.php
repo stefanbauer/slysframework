@@ -84,7 +84,7 @@ class Entity {
 
 		$result = $db->query($query);
 
-		var_dump($query);
+//		var_dump($query);
 
 //		$query = "REPLACE INTO `".$this->_tableName."` (`".implode('`,`', array_keys($this->_data))."`) VALUES (".implode(',', $values).")";
 //		$result = $db->query($query);
