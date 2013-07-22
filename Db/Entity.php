@@ -140,6 +140,8 @@ class Entity {
 
 		$db->query($query);
 
+		return $this;
+
 	}
 
 	/**
