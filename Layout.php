@@ -90,8 +90,9 @@ class Layout extends HelperCompatible {
 		if($this->_name == $name)
 			return;
 
-		$this->_name = $name;
+		$application = Application::getInstance();
 
+		$this->_name = $name;
 
 		// when name of layouts is changed
 		// reset placeholders
@@ -105,7 +106,7 @@ class Layout extends HelperCompatible {
 		$this->_views = [];
 
 		// load placeholders based on new layout name
-		$layoutsConfig = Application::getInstance()->getConfig( 'layouts', array() );
+		$layoutsConfig = $application->getConfig( 'layouts', array() );
 
 		if( array_key_exists($this->_name, $layoutsConfig) ) {
 
@@ -114,6 +115,9 @@ class Layout extends HelperCompatible {
 			if( array_key_exists('placeholders', $config) && is_array($config['placeholders']) ) {
 
 				foreach($config['placeholders'] as $placeholderName => $closure) {
+
+					if( $placeholderName != 'content' && $application->getHelper('context')->isJSON() )
+						continue;
 
 					// each and every placeholder should have valid callable object
 					if( !is_callable($closure) )
