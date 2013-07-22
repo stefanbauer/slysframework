@@ -9,6 +9,12 @@
 namespace Slys\Helper;
 
 
+/**
+ * Class Context
+ * If context is json then layout will call toJSON method of view object in content placeholder
+ *
+ * @package Slys\Helper
+ */
 class Context {
 
 	private $_context = 'html';

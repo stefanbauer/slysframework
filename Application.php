@@ -257,8 +257,10 @@ class Application {
 
 		$layoutName = $this->_layout->getName();
 
-		if( empty($layoutName) )
-			$this->_layout->setName($defaultLayout);
+
+		// set name method will force layout to reload placeholders and process them
+		if( empty($layoutName) ) // make sure that we do not overwrite layout name that was set in preDispatch
+			$this->_layout->setName($defaultLayout); // we must set layout to default via setName to reload placeholders
 
 		$this->_callPluginsMethod('postDispatch');
 
@@ -306,7 +308,7 @@ class Application {
 
 		$helpersList = $this->getConfig('helpers');
 
-		// merge default helpers with custom
+		// merge default helpers with custom ones
 		$helpersList = array_merge([
 			'translate'	=> 'Slys\Helper\Translate',
 			'url'		=> 'Slys\Helper\Url',
