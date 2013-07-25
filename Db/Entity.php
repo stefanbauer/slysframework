@@ -40,11 +40,11 @@ class Entity {
 		if( $this->_tableName == null )
 			$this->_detectTableName();
 
-		if( !is_array($this->_primaryKey) )
+		if( !is_array($this->_primaryKey ) )
 			$this->_primaryKey = [$this->_primaryKey];
 
 		if( $id != null )
-			$this->_load($id);
+			$this->_load( $id );
 
 	}
 
@@ -53,6 +53,7 @@ class Entity {
 	 *
 	 * @access	public
 	 * @param	array $values
+	 * @return	void
 	 */
 	public function fromArray( array $values ) {
 
@@ -90,7 +91,7 @@ class Entity {
 	 * @param	string $column
 	 * @return	string|null
 	 */
-	public function getColumnValue($column) {
+	public function getColumnValue( $column ) {
 
 		return array_key_exists( $column, $this->_columnValues ) ? $this->_columnValues[$column] : null;
 
@@ -124,7 +125,7 @@ class Entity {
 	 * Saves the current row
 	 *
 	 * @access	public
-	 * @return	$this
+	 * @return	bool
 	 */
 	public function save() {
 
@@ -161,9 +162,47 @@ class Entity {
 		if( $this->_loaded )
 			$query .= ' WHERE '. $this->_getWherePart();
 
-		$db->query($query);
+		if( !$db->query($query) )
+			return false;
 
-		return $this;
+		return true;
+
+	}
+
+	/**
+	 * Deletes a row
+	 *
+	 * @access	public
+	 * @return	bool
+	 */
+	public function delete() {
+
+		$db = Database::getInstance();
+
+		if( !$this->wasLoaded() )
+			return false;
+
+		$query = "DELETE FROM `".$this->_tableName."` ";
+		$query .= 'WHERE ' . $this->_getWherePart();
+
+		$db->query( $query );
+
+		if( !$db->query($query) )
+			return false;
+
+		return true;
+
+	}
+
+	/**
+	 * Returns if dataset was loaded
+	 *
+	 * @access	public
+	 * @return	bool
+	 */
+	public function wasLoaded() {
+
+		return $this->_loaded;
 
 	}
 
@@ -244,8 +283,10 @@ class Entity {
 		$values = $result->fetch_assoc();
 
 		if( $values ) {
+
 			$this->fromArray( $values );
 			$this->_loaded = true;
+
 		}
 
 		// reset dirty columns
