@@ -22,9 +22,9 @@ error_reporting( E_ALL );
 use Slys\Application;
 
 define( 'DS', DIRECTORY_SEPARATOR );
-define( 'PATH_APP', dirname(__DIR__) . DS . 'application' );
-define( 'PATH_SLYS', dirname(__DIR__) . DS . 'slys' );
-define( 'PATH_TMP', dirname(__DIR__) . DS . 'tmp' );
+define( 'PATH_APP', './../../application' );
+define( 'PATH_SLYS', './../../slys' );
+define( 'PATH_TMP', './../../tmp' );
 define( 'PATH_LANG', PATH_APP . DS . 'lang' );
 define( 'PATH_LAYOUTS', PATH_APP . DS . 'layouts' );
 define( 'PATH_MODULES', PATH_APP . DS . 'modules' );
@@ -35,14 +35,12 @@ $application = Application::getInstance();
 $db = \Slys\Database::getInstance();
 
 // relation between table and module
-$tableToModule = [
-	'user' => 'User',
-	'session' => 'User',
-];
+$tableToModule = $application->getConfig( 'table-module-mapping' );
 
 $result = $db->query( 'SHOW TABLES' );
 
 while( $tableInfo = $result->fetch_array()) {
+
 	$tableName = $tableInfo[0];
 
 	if( empty( $tableToModule[$tableName] ) ) {
