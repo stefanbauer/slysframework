@@ -43,8 +43,15 @@ class Entity {
 		if( !is_array($this->_primaryKey ) )
 			$this->_primaryKey = [$this->_primaryKey];
 
-		if( $id != null )
-			$this->_load( $id );
+		if( $id != null ) {
+			if( is_array($id) ) {
+				$this->findBy($id);
+			}
+			else {
+				$where = [$this->_primaryKey[0] => $id];
+				$this->findBy($where);
+			}
+		}
 
 	}
 
