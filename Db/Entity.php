@@ -33,7 +33,7 @@ class Entity {
 	 *
 	 * @access	public
 	 * @param	null|string $id
-	 * @return	void
+	 * @return	Entity
 	 */
 	public final function __construct( $id = null ) {
 
@@ -69,8 +69,10 @@ class Entity {
 	/**
 	 * Sets a column value
 	 *
-	 * @param $column
-	 * @param $value
+	 * @access	public
+	 * @param	string $column
+	 * @param	string $value
+	 * @return	void
 	 */
 	public function setColumnValue( $column, $value ) {
 
@@ -191,6 +193,51 @@ class Entity {
 			return false;
 
 		return true;
+
+	}
+
+
+	/**
+	 * Find a record by given values
+	 *
+	 * @access	public
+	 * @param	array $values
+	 * @return	void
+	 */
+	public function findBy( array $values ) {
+
+		$query = "SELECT * FROM `".$this->_tableName."`";
+
+		// building where part
+		$whereParts = [];
+
+		$db = Database::getInstance();
+
+		foreach( $values as $columnName => $columnValue ) {
+
+			$value = ( is_numeric( $columnValue ) ) ? (int)$columnValue : '\''.$db->real_escape_string( $columnValue ).'\'';
+			$whereParts[] = '`'.$columnName.'` = '. $value;
+
+		}
+
+		$whereString = implode( ' AND ', $whereParts );
+
+		$query .= ' WHERE ' . $whereString;
+		$query .= ' LIMIT 1';
+
+		$result = $db->query( $query );
+
+		$values = $result->fetch_assoc();
+
+		if( $values ) {
+
+			$this->fromArray( $values );
+			$this->_loaded = true;
+
+		}
+
+		// reset dirty columns
+		$this->_dirtyColumns = [];
 
 	}
 
