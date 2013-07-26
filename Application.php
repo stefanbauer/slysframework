@@ -277,6 +277,7 @@ class Application {
 
 		$this->_config = require $globalConfigPath;
 
+
 		if( file_exists( $localConfigPath ) ) {
 
 			$localConfig = require $localConfigPath;
