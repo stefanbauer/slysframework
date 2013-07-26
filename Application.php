@@ -145,11 +145,11 @@ class Application {
 		return $this->_layout;
 	}
 
-	/**
-	 * @param Request $request
-	 * @return View
-	 */
-	public function processRequest( Request $request ) {
+
+	public function processRequest( Request $request, $triggerPlugins = false ) {
+
+		if($triggerPlugins)
+			$this->_callPluginsMethod('preDispatch');
 
 		$viewObject = new View();
 
@@ -159,7 +159,7 @@ class Application {
 
 		$className = $this->_requestToClassName( $request );
 
-		$instance = new $className( $viewObject );
+		$instance = new $className( $viewObject, $request );
 		$actionReturn = $instance->{ $this->toCamelCase( $request->getAction() ) . 'Action' }();
 
 		// process action return
@@ -167,6 +167,9 @@ class Application {
 			$viewObject = $actionReturn;
 		elseif ( is_array($actionReturn) )
 			$viewObject->setData( $actionReturn );
+
+		if($triggerPlugins)
+			$this->_callPluginsMethod('postDispatch');
 
 		return $viewObject;
 
@@ -250,19 +253,8 @@ class Application {
 	private function _dispatch() {
 
 		$defaultLayout = $this->getConfig('default-layout', 'main');
-
 		$this->_layout = new Layout();
-
-		$this->_callPluginsMethod('preDispatch');
-
-		$layoutName = $this->_layout->getName();
-
-
-		// set name method will force layout to reload placeholders and process them
-		if( empty($layoutName) ) // make sure that we do not overwrite layout name that was set in preDispatch
-			$this->_layout->setName($defaultLayout); // we must set layout to default via setName to reload placeholders
-
-		$this->_callPluginsMethod('postDispatch');
+		$this->_layout->setName($defaultLayout);
 
 	}
 
@@ -314,7 +306,8 @@ class Application {
 			'translate'	=> 'Slys\Helper\Translate',
 			'url'		=> 'Slys\Helper\Url',
 			'messages'	=> 'Slys\Helper\Messages',
-			'context'   => 'Slys\Helper\Context'
+			'context'   => 'Slys\Helper\Context',
+			'forward'   => 'Slys\Helper\Forward'
 		], $helpersList);
 
 		foreach( $helpersList as $helperName => $helperClassName ) {

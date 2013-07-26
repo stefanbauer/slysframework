@@ -16,26 +16,33 @@ class Controller extends HelperCompatible {
 	protected $view;
 
 	/**
+	 * @var Request
+	 */
+	private $_request;
+
+	/**
 	 * Constructor
 	 *
 	 * @access public
 	 * @param View $view
+	 * @param Request $request
 	 */
-	final public function __construct( View $view ) {
+	final public function __construct( View $view, Request $request ) {
 
 		$this->view = $view;
+		$this->_request = $request;
 
 	}
 
 	/**
-	 * Proxy to the Application getRequest method
+	 * Get request
 	 *
 	 * @access public
 	 * @return Request
 	 */
 	public function getRequest() {
 
-		return Application::getInstance()->getRequest();
+		return $this->_request;
 
 	}
 

@@ -23,12 +23,6 @@ class View extends HelperCompatible {
 	public function setTemplate( $file, $module = 'index' ) {
 
 		$pathToFile = PATH_MODULES . DS . $module . DS . 'views' . DS . $file;
-
-		if( !file_exists( $pathToFile ) )
-			throw new Exception(
-				'Template file `'. $file . '` '.
-				'in module `'. $module . '` was not found. Path:'.$pathToFile );
-
 		$this->_templateFile = $pathToFile;
 	}
 
@@ -43,12 +37,11 @@ class View extends HelperCompatible {
 	}
 
 	/**
-	 * Render
-	 *
-	 * @access public
-	 * @return void
+	 * @throws Application\Exception
 	 */
 	public function render() {
+		if( !file_exists( $this->_templateFile ) )
+			throw new Exception('Template file `'. $this->_templateFile . '` was not found' );
 
 		require_once $this->_templateFile;
 

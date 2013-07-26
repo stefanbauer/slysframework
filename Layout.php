@@ -168,7 +168,7 @@ class Layout extends HelperCompatible {
 			// if callable returned us something, and this something is View object
 			// use it as result
 			if( false === $viewObject instanceof View)
-				$viewObject = $application->processRequest( $request );
+				$viewObject = $application->processRequest( $request, $placeholderName == 'content' );
 
 			// store view object
 			$this->_views[$placeholderName] = $viewObject;
