@@ -181,10 +181,10 @@ class Application {
 	private function _routeRequest() {
 
 		$this->_request = new Request();
-		$this->_request->setMethod( $_SERVER['REQUEST_METHOD'] );
+		$this->_request->setMethod( @$_SERVER['REQUEST_METHOD'] );
 
 		// get request uri path and remove trailing slash
-		$url = rtrim( parse_url(  $_SERVER['REQUEST_URI'] , PHP_URL_PATH ), '/');
+		$url = rtrim( parse_url( @$_SERVER['REQUEST_URI'] , PHP_URL_PATH ), '/');
 
 		// create an array of url pars
 		$urlParts = explode( '/', $url );

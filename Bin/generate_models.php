@@ -43,15 +43,17 @@ while( $tableInfo = $result->fetch_array()) {
 
 	$tableName = $tableInfo[0];
 
-	if( empty( $tableToModule[$tableName] ) ) {
-		echo PHP_EOL.'No module specified for table `'.$tableName.'`!'.PHP_EOL;
-		die;
-	}
+	if( empty( $tableToModule[$tableName] ) )
+		continue;
 
 	$moduleName = $tableToModule[$tableName];
 
 	$className = toCamelCase( $tableName, true );
-	$filePath = PATH_MODULES . DS . $moduleName . DS . 'models' . DS . $className . '.php';
+	$folderPath = PATH_MODULES . DS . $moduleName . DS . 'models';
+	$filePath = $folderPath . DS . $className . '.php';
+
+	if( !file_exists( $folderPath ) )
+		mkdir( $folderPath, 0775, true );
 
 	// create empty class with no functionality
 	if( !file_exists( $filePath ) ) {
@@ -59,7 +61,6 @@ while( $tableInfo = $result->fetch_array()) {
 <?php
 /**
  * $className
- *
  *
  * @author		ModelGenerator <robot@tritendo.de>
  * @copyright	Copyright (c) Tritendo Media GmbH. (http://www.tritendo.de)
@@ -78,7 +79,7 @@ class $className extends Entity {
 }
 CONTENT;
 
-		file_put_contents($filePath, $content);
+		file_put_contents( $filePath, $content );
 		// some info to display
 		echo 'Table `'.$tableName.'` -> '.$moduleName.'\\Model\\'.$className.' file created'.PHP_EOL;
 
@@ -122,8 +123,15 @@ CONTENT;
 
 		$default = '';
 
-		if($columnInfo['Default']) {
-			$default = ' = ' . $columnInfo['Default'];
+		if( $columnInfo['Default'] ) {
+
+			if( is_numeric( $columnInfo['Default'] ) )
+				$defaultParam = $columnInfo['Default'];
+			else
+				$defaultParam = '\''.$columnInfo['Default'].'\'';
+
+			$default = ' = ' . $defaultParam;
+
 		}
 
 		$docInfo = [ 'method' => 'get'.$methodNameBase, 'string' => ' * @method '.$returnType.' get'.$methodNameBase.'()'];
