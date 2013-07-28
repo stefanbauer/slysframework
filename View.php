@@ -55,12 +55,14 @@ class View extends HelperCompatible {
 	}
 
 	public function toJSON() {
-		return json_encode($this->_data);
+
+		return json_encode( $this->_data );
+
 	}
 
 	public function __get( $name ) {
 
-		if(!empty($this->_data[$name]))
+		if( !empty( $this->_data[$name] ) )
 			return $this->_data[$name];
 
 		return null;
@@ -75,7 +77,7 @@ class View extends HelperCompatible {
 
 	public function __isset( $name ) {
 
-		return !empty($this->_data[$name]);
+		return !empty( $this->_data[$name] );
 
 	}
 
