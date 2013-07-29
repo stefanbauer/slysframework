@@ -10,15 +10,20 @@ namespace Slys\Helper;
 
 
 use Slys\Application;
-use Slys\Request;
 
 class Forward {
 
-	public function forward( Request $request ) {
+	public function forward( $action, $controller = null, $module = null ) {
+		$request = Application::getInstance()->getRequest();
+		$request->setAction($action);
 
-//		Application::getInstance()->processRequest($request, true);
-//		Application::getInstance()->getLayout()->placeholder()
+		if(!empty($controller))
+			$request->setController($controller);
 
+		if(!empty($module))
+			$request->setModule($module);
+
+		Application::getInstance()->addRequest($request);
 	}
 
 } 

@@ -16,8 +16,7 @@ class Application {
 	protected $_config = [];
 	protected $_loadedPlugins = [];
 	protected $_loadedHelpers = [];
-	protected $_processedRequests = [];
-
+	protected $_callStack = [];
 	/**
 	 * @var Layout
 	 */
@@ -75,6 +74,10 @@ class Application {
 
 	}
 
+	public function addRequest( Request $request ) {
+		$this->_callStack[] = $request;
+	}
+
 	/**
 	 * Starts application
 	 *
@@ -89,9 +92,15 @@ class Application {
 		$this->_layout = new Layout();
 		$this->_layout->setName( $defaultLayout );
 
-		// process "main" request
 
 		$mainView = $this->processRequest($this->getRequest(), true);
+
+		while( $request = array_shift($this->_callStack) ) {
+			$mainView = $this->processRequest($request, true);
+		}
+
+		// process "main" request
+
 		$this->_layout->setContent( $mainView );
 
 		// Render layout
@@ -251,7 +260,7 @@ class Application {
 
 		}
 
-		if($key % 2 == 0)
+		if(isset($key) && $key % 2 == 0)
 			$values[] = '';
 
 		// Now we need to combine params and values as save in request object

@@ -43,7 +43,7 @@ class View extends HelperCompatible {
 		if( !file_exists( $this->_templateFile ) )
 			throw new Exception('Template file `'. $this->_templateFile . '` was not found' );
 
-		require_once $this->_templateFile;
+		require $this->_templateFile;
 
 	}
 

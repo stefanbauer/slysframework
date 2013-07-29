@@ -12,6 +12,10 @@ namespace Slys;
  * Class HelperCompatible
  * Defines methods that provide compatibility with plugins
  *
+ * @method void forward() forward( $action, $controller = null, $module = null )
+ * @method string translate() translate( $label )
+ * @method \Slys\Helper\Messages messages() messages()
+ *
  * @package Slys
  */
 class HelperCompatible {
