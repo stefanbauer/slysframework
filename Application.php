@@ -16,6 +16,7 @@ class Application {
 	protected $_config = [];
 	protected $_loadedPlugins = [];
 	protected $_loadedHelpers = [];
+	protected $_processedRequests = [];
 
 	/**
 	 * @var Layout
@@ -54,7 +55,23 @@ class Application {
 		// load plugins always after configuration is loaded
 		$this->_loadPlugins();
 		$this->_loadHelpers();
+
 		$this->_routeRequest();
+
+	}
+
+	/**
+	 * Retrieve instance of Application
+	 *
+	 * @access public
+	 * @return Application
+	 */
+	public static function getInstance() {
+
+		if( self::$_instance == null )
+			self::$_instance = new self;
+
+		return self::$_instance;
 
 	}
 
@@ -67,10 +84,18 @@ class Application {
 	public function run() {
 
 		// starting application
-		$this->_dispatch();
+		$defaultLayout = $this->getConfig('default-layout', 'main');
+
+		$this->_layout = new Layout();
+		$this->_layout->setName( $defaultLayout );
+
+		// process "main" request
+
+		$mainView = $this->processRequest($this->getRequest(), true);
+		$this->_layout->setContent( $mainView );
 
 		// Render layout
-		$this->getLayout()->render();
+		$this->_layout->render();
 
 	}
 
@@ -120,20 +145,6 @@ class Application {
 		return $this->_config[$name];
 	}
 
-	/**
-	 * Retrieve instance of Application
-	 *
-	 * @access public
-	 * @return Application
-	 */
-	public static function getInstance() {
-
-		if( self::$_instance == null )
-			self::$_instance = new self;
-
-		return self::$_instance;
-
-	}
 
 	/**
 	 * Returns the layout
@@ -173,6 +184,26 @@ class Application {
 			$this->_callPluginsMethod('postDispatch');
 
 		return $viewObject;
+
+	}
+
+
+	/**
+	 * Converts string test-string to testString
+	 *
+	 * @param        $string
+	 * @param bool   $camelFirst
+	 * @param string $symbol
+	 * @return string
+	 */
+	public function toCamelCase($string, $camelFirst = false, $symbol = '-') {
+
+		$string = lcfirst( str_replace( ' ','', ucwords( strtolower( str_replace( $symbol, ' ', $string ) ) ) ) );
+
+		if( $camelFirst )
+			$string = ucfirst($string);
+
+		return $string;
 
 	}
 
@@ -242,21 +273,6 @@ class Application {
 				$this->toCamelCase( $request->getModule(), true ).
 				'\\Controller\\'.
 				$this->toCamelCase( $request->getController(), true );
-	}
-
-	/**
-	 * Starts process of dispatching request
-	 * evaluates placeholders
-	 *
-	 * @access private
-	 * @return void
-	 */
-	private function _dispatch() {
-
-		$defaultLayout = $this->getConfig('default-layout', 'main');
-		$this->_layout = new Layout();
-		$this->_layout->setName($defaultLayout);
-
 	}
 
 
@@ -461,25 +477,6 @@ class Application {
 		if( !file_exists( PATH_TMP ) )
 			if( !mkdir( PATH_TMP ) )
 				throw new Exception( 'tmp folder could not be created at '. PATH_TMP );
-
-	}
-
-	/**
-	 * Converts string test-string to testString
-	 *
-	 * @param        $string
-	 * @param bool   $camelFirst
-	 * @param string $symbol
-	 * @return string
-	 */
-	public function toCamelCase($string, $camelFirst = false, $symbol = '-') {
-
-		$string = lcfirst( str_replace( ' ','', ucwords( strtolower( str_replace( $symbol, ' ', $string ) ) ) ) );
-
-		if( $camelFirst )
-			$string = ucfirst($string);
-
-		return $string;
 
 	}
 

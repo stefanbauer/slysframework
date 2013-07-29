@@ -22,6 +22,9 @@ class Layout extends HelperCompatible {
 
 	protected $_name;
 
+	/** @var  View */
+	protected $_content;
+
 
 	/**
 	 * Render
@@ -32,9 +35,11 @@ class Layout extends HelperCompatible {
 	public function render() {
 
 		if( Application::getInstance()->getHelper('context')->isJSON() ) {
-			echo $this->_views['content']->toJSON();
+			echo $this->_content->toJSON();
 		}
 		else {
+
+			$this->_processPlaceholders();
 			require_once PATH_LAYOUTS . DS . $this->getName() . '.phtml';
 		}
 
@@ -48,29 +53,18 @@ class Layout extends HelperCompatible {
 	public function placeholder( $name ) {
 
 		if( empty( $this->_views[$name] ) )
-			throw new Exception( 'Placeholder with name '.$name.' is not prepeared for the layout '.$this->_name.
-			'. Please check configuration.' );
+			throw new Exception( 'View with the name '.$name.' is not prepared for the layout '.$this->_name.
+			                     '. Please check configuration.' );
 
 		return $this->_views[$name];
 
 	}
 
-
 	/**
-	 * Returns a placeholder
-	 *
-	 * @access public
-	 * @param $name
-	 * @return callable
-	 * @throws Application\Exception
+	 * @return View
 	 */
-	public function getPlaceholder($name) {
-
-		if( empty( $this->_placeholders[$name] ) )
-			throw new Exception( 'Placeholder with name '.$name.' is not prepeared for the layout '.$this->_name.
-			'. Please check configuration.' );
-
-		return $this->_placeholders[$name];
+	public function content() {
+		return $this->_content;
 	}
 
 	/**
@@ -87,24 +81,7 @@ class Layout extends HelperCompatible {
 
 	public function setName( $name ) {
 
-		if($this->_name == $name)
-			return;
-
 		$this->_name = $name;
-
-		// when name of layouts is changed
-		// reset placeholders
-		$this->_placeholders = [
-			// content placeholder is default one
-			// can be overwritten in layouts config, by creating placeholder with name 'content'
-			'content' => function(Request $request) {}
-		];
-
-		// reset all views
-		$this->_views = [];
-
-		$this->_loadPlaceholders();
-		$this->_processPlaceholders();
 
 	}
 
@@ -120,11 +97,19 @@ class Layout extends HelperCompatible {
 
 	}
 
+
 	/**
-	 * load placeholders based on new layout name
+	 * @param View $content
+	 */
+	public function setContent( View $content ) {
+
+		$this->_content = $content;
+	}
+
+	/**
 	 * @throws Application\Exception
 	 */
-	private function _loadPlaceholders() {
+	private function _processPlaceholders() {
 
 		$application = Application::getInstance();
 
@@ -136,54 +121,28 @@ class Layout extends HelperCompatible {
 
 			if( array_key_exists('placeholders', $config) && is_array($config['placeholders']) ) {
 
-				foreach($config['placeholders'] as $placeholderName => $closure) {
-
-					if( $placeholderName != 'content' && $application->getHelper('context')->isJSON() )
-						continue;
+				foreach($config['placeholders'] as $placeholderName => $callable) {
 
 					// each and every placeholder should have valid callable object
-					if( !is_callable($closure) )
-						throw new Exception('Placeholder '.$placeholderName.' in layout '.$this->_name.' must be valid callable');
+					if( !is_callable($callable) )
+						throw new Exception('Placeholder '.$placeholderName.' in the layout '.$this->_name.
+						' must be valid callable');
 
-					$this->_placeholders[$placeholderName] = $closure;
+					// processing callable with its own clone of main request
+					$request = clone $application->getRequest();
+
+					// send to callable request and placeholder name, who knows when we will need this
+					$viewObject = call_user_func_array($callable, array($request, $placeholderName));
+
+					// if callable returned us something, and this something is View object
+					// use it as result
+					if( false === $viewObject instanceof View)
+						$viewObject = $application->processRequest( $request );
+
+					// store view object
+					$this->_views[$placeholderName] = $viewObject;
 				}
 			}
-		}
-
-	}
-
-	/**
-	 * Evaluates placeholders callable objects
-	 */
-	private function _processPlaceholders() {
-
-		$application = Application::getInstance();
-
-		// while there is placeholders to process
-		while( count($this->_placeholders) > 0 ) {
-
-			$placeholderName = current( array_keys( $this->_placeholders ) );
-			$callable = array_shift( $this->_placeholders );
-
-			// processing callable with its own clone of main request
-			$request = clone $application->getRequest();
-
-			// send to callable request and placeholder name, who knows when we will need this
-			$viewObject = call_user_func_array($callable, array($request, $placeholderName));
-
-			// if callable returned us something, and this something is View object
-			// use it as result
-			if( false === $viewObject instanceof View)
-				$viewObject = $application->processRequest( $request, $placeholderName == 'content' );
-
-			// store view object
-			$this->_views[$placeholderName] = $viewObject;
-
-			if( $application->getHelper('context')->isJSON() ) {
-				$this->_placeholders = [];
-				return;
-			}
-
 		}
 
 	}
