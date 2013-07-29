@@ -251,6 +251,9 @@ class Application {
 
 		}
 
+		if($key % 2 == 0)
+			$values[] = '';
+
 		// Now we need to combine params and values as save in request object
 		// Also don't forget to add the request vars (from post, get ...)
 		$this->_request->setParams(

@@ -66,8 +66,7 @@ class Controller extends HelperCompatible {
 	 */
 	protected function _getParams() {
 
-		$request = $this->getRequest();
-		return $request->getParams();
+		return $this->getRequest()->getParams();
 
 	}
 

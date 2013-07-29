@@ -95,16 +95,9 @@ class Request {
 	/**
 	 * @param array $params
 	 */
-	public function setParams( $params ) {
+	public function setParams( array $params ) {
 
-		// Append module, controller and action
-		$dataToAppend = [
-			'module' => $this->getModule(),
-			'controller' => $this->getController(),
-			'action' => $this->getAction()
-		];
-
-		$this->_params = array_merge( $params, $dataToAppend );
+		$this->_params = $params;
 
 	}
 
