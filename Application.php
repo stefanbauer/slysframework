@@ -158,9 +158,10 @@ class Application {
 			$request->getModule() );
 
 		$className = $this->_requestToClassName( $request );
+		$actionName = $this->toCamelCase( $request->getAction() );
 
 		$instance = new $className( $viewObject, $request );
-		$actionReturn = $instance->{ $this->toCamelCase( $request->getAction() ) . 'Action' }();
+		$actionReturn = $instance->{ $actionName . 'Action' }();
 
 		// process action return
 		if( $actionReturn instanceof View )

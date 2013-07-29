@@ -90,8 +90,6 @@ class Layout extends HelperCompatible {
 		if($this->_name == $name)
 			return;
 
-		$application = Application::getInstance();
-
 		$this->_name = $name;
 
 		// when name of layouts is changed
@@ -105,7 +103,31 @@ class Layout extends HelperCompatible {
 		// reset all views
 		$this->_views = [];
 
-		// load placeholders based on new layout name
+		$this->_loadPlaceholders();
+		$this->_processPlaceholders();
+
+	}
+
+	/**
+	 * Gets a name
+	 *
+	 * @access public
+	 * @return string
+	 */
+	public function getName() {
+
+		return $this->_name;
+
+	}
+
+	/**
+	 * load placeholders based on new layout name
+	 * @throws Application\Exception
+	 */
+	private function _loadPlaceholders() {
+
+		$application = Application::getInstance();
+
 		$layoutsConfig = $application->getConfig( 'layouts', array() );
 
 		if( array_key_exists($this->_name, $layoutsConfig) ) {
@@ -125,24 +147,8 @@ class Layout extends HelperCompatible {
 
 					$this->_placeholders[$placeholderName] = $closure;
 				}
-
 			}
-
 		}
-
-		$this->_processPlaceholders();
-
-	}
-
-	/**
-	 * Gets a name
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function getName() {
-
-		return $this->_name;
 
 	}
 
