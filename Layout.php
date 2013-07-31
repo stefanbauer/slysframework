@@ -14,9 +14,6 @@ class Layout extends HelperCompatible {
 
 	protected $_title;
 
-	/** @var callable[]  */
-	protected $_placeholders = [];
-
 	/** @var View[] */
 	protected $_views = [];
 
@@ -36,10 +33,10 @@ class Layout extends HelperCompatible {
 
 		if( Application::getInstance()->getHelper('context')->isJSON() ) {
 			echo $this->_content->toJSON();
-		}
-		else {
-
+		} else {
+			// process placeholders for layout
 			$this->_processPlaceholders();
+
 			require_once PATH_LAYOUTS . DS . $this->getName() . '.phtml';
 		}
 
@@ -107,6 +104,8 @@ class Layout extends HelperCompatible {
 	}
 
 	/**
+	 * Evaluates placeholders defined in configuration for this layout name
+	 *
 	 * @throws Application\Exception
 	 */
 	private function _processPlaceholders() {

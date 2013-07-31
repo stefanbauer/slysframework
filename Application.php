@@ -74,6 +74,11 @@ class Application {
 
 	}
 
+	/**
+	 * Adds request to the end of call stack
+	 *
+	 * @param Request $request
+	 */
 	public function addRequest( Request $request ) {
 		$this->_callStack[] = $request;
 	}
@@ -89,17 +94,18 @@ class Application {
 		// starting application
 		$defaultLayout = $this->getConfig('default-layout', 'main');
 
+		// creating layout before processing requests
 		$this->_layout = new Layout();
 		$this->_layout->setName( $defaultLayout );
 
 
+		// process "main" request
 		$mainView = $this->processRequest($this->getRequest(), true);
 
+		// process remaining requests from stack
 		while( $request = array_shift($this->_callStack) ) {
 			$mainView = $this->processRequest($request, true);
 		}
-
-		// process "main" request
 
 		$this->_layout->setContent( $mainView );
 
