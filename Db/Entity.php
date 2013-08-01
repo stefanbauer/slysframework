@@ -176,6 +176,8 @@ class Entity {
 		if( !$db->query($query) )
 			return false;
 
+		$this->_loaded = true;
+
 		return true;
 
 	}
