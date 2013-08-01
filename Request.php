@@ -109,6 +109,12 @@ class Request {
 		return $this->_params;
 	}
 
+	public function getParam($name, $default = null) {
+
+		return isset($this->_params[$name]) ? $this->_params[$name] : $default;
+
+	}
+
 
 
 

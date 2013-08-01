@@ -152,7 +152,9 @@ class Entity {
 		$set = [];
 
 		// Only update dirty columns
-		foreach( $this->_dirtyColumns as $columnName ) {
+		foreach( $this->_dirtyColumns as $columnInfo ) {
+
+			$columnName = $columnInfo['column'];
 
 			// skip primary keys
 			if( in_array( $columnName, $this->_primaryKey ) )

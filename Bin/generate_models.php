@@ -26,6 +26,7 @@ define( 'PATH_APP', './../../application' );
 define( 'PATH_SLYS', './../../slys' );
 define( 'PATH_TMP', './../../tmp' );
 define( 'PATH_LANG', PATH_APP . DS . 'lang' );
+define( 'PATH_VENDORS', PATH_APP . DS . 'vendors' );
 define( 'PATH_LAYOUTS', PATH_APP . DS . 'layouts' );
 define( 'PATH_MODULES', PATH_APP . DS . 'modules' );
 
