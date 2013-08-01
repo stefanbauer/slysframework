@@ -51,6 +51,8 @@ class Application {
 
 		$this->_loadConfiguration();
 
+		$this->_loadVendors();
+
 		// load plugins always after configuration is loaded
 		$this->_loadPlugins();
 		$this->_loadHelpers();
@@ -495,6 +497,29 @@ class Application {
 		if( !file_exists( PATH_TMP ) )
 			if( !mkdir( PATH_TMP ) )
 				throw new Exception( 'tmp folder could not be created at '. PATH_TMP );
+
+	}
+
+	private function _loadVendors() {
+
+		set_include_path(
+			implode(
+				PATH_SEPARATOR, array(
+					realpath(PATH_VENDORS),
+					get_include_path(),
+				)
+			)
+		);
+
+		$vendors = $this->getConfig('vendors', []);
+
+		foreach($vendors as $vendorName => $setup) {
+
+			if(array_key_exists('autoload', $setup)) {
+				call_user_func($setup['autoload']);
+			}
+
+		}
 
 	}
 
