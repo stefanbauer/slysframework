@@ -322,7 +322,7 @@ class Application {
 	 */
 	private function _autoloadClassName( $name ) {
 
-		if( !array_key_exists($name, $this->_classMap) )
+		if( !array_key_exists($name, $this->_classMap) || stream_resolve_include_path($this->_classMap[$name]) == false )
 			$this->_buildClassMap();
 
 		if( array_key_exists($name, $this->_classMap) )
@@ -429,27 +429,46 @@ class Application {
 	private function _buildClassMap() {
 
 		// map of module elements to load
-		$moduleElements = $this->getConfig('module-elements');
+		$moduleElements = ['controllers' => 'Controller',
+							'models' => 'Model',
+							'plugins' => 'Plugin',
+							'helpers' => 'Helper'];
 
 		// clear variables
 		$this->_classMap = [];
 
-		$this->_loadFolderToClassMap( PATH_SLYS, 'Slys' );
+		$classMapItems = $this->getConfig('classmap', []);
+		$classMapItems = array_merge(['Slys' => PATH_SLYS], $classMapItems);
+
+		// load classmap items
+		foreach( $classMapItems as $namespace => $path ) {
+			$this->_loadFolderToClassMap($path, $namespace);
+		}
 
 		// parse modules
-		$modules = glob( PATH_APP . DS . 'modules' . DS . '*', GLOB_ONLYDIR );
+		$modules = $this->getConfig('modules', []);
 
-		foreach( $modules as $modulePath ) {
+		foreach( $modules as $moduleName => $setup ) {
 
-			$moduleName = basename($modulePath);
+			$modulePath = PATH_APP . DS . 'modules' . DS . $moduleName;
 
-			foreach( $moduleElements as $folderName => $namespace ) {
+			$elementsToAdd = [];
+
+			if( !empty( $setup['namespace'] ) && is_array($setup['namespace']) ) {
+				$elementsToAdd = $setup['namespace'];
+			}
+
+			$elementsToAdd = array_merge($moduleElements, $elementsToAdd);
+
+			foreach( $elementsToAdd as $folderName => $namespace ) {
 				$this->_loadFolderToClassMap($modulePath . DS .$folderName, $moduleName.'\\'.$namespace);
 			}
 
 		}
 
-		// storing classmap to a classnap.php cache file
+
+
+		// storing classmap to a classmap.php cache file
 		$exportString = var_export( $this->_classMap, true );
 		$exportString = str_replace('\\\\', '\\', $exportString);
 		$content = "<?php // generated at " . date('Y-m-d H:i:s') . " \r\nreturn $exportString;";
